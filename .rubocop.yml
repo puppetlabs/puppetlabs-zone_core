@@ -73,6 +73,8 @@ Style/StringMethods:
   Enabled: true
 Layout/EndOfLine:
   Enabled: false
+Layout/IndentHeredoc:
+  Enabled: false
 Metrics/AbcSize:
   Enabled: false
 Metrics/BlockLength:
@@ -104,4 +106,6 @@ Style/AsciiComments:
 Style/IfUnlessModifier:
   Enabled: false
 Style/SymbolProc:
+  Enabled: false
+Style/SignalException:
   Enabled: false

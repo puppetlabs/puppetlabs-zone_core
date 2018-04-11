@@ -6,49 +6,52 @@ Puppet::Type.newtype(:zone) do
 the zone's filesystem (with the `path` attribute), the zone resource will
 autorequire that directory."
 
-module Puppet::Zone
-  class StateMachine
-    # A silly little state machine.
-    def initialize
-      @state = {}
-      @sequence = []
-      @state_aliases = {}
-      @default = nil
-    end
+  module Puppet::Zone
+    # Zone state machine
+    class StateMachine
+      # A silly little state machine.
+      def initialize
+        @state = {}
+        @sequence = []
+        @state_aliases = {}
+        @default = nil
+      end
 
-    # The order of calling insert_state is important
-    def insert_state(name, transitions)
-      @sequence << name
-      @state[name] = transitions
-    end
+      # The order of calling insert_state is important
+      def insert_state(name, transitions)
+        @sequence << name
+        @state[name] = transitions
+      end
 
-    def alias_state(state, salias)
-      @state_aliases[state] = salias
-    end
+      def alias_state(state, salias)
+        @state_aliases[state] = salias
+      end
 
-    def name(n)
-      @state_aliases[n.to_sym] || n.to_sym
-    end
+      def name(n)
+        @state_aliases[n.to_sym] || n.to_sym
+      end
 
-    def index(state)
-      @sequence.index(name(state))
-    end
+      def index(state)
+        @sequence.index(name(state))
+      end
 
-    # return all states between fs and ss excluding fs
-    def sequence(fs, ss)
-      fi = index(fs)
-      si= index(ss)
-      (if fi > si
-        then @sequence[si .. fi].map{|i| @state[i]}.reverse
-        else @sequence[fi .. si].map{|i| @state[i]}
-      end)[1..-1]
-    end
+      # return all states between fs and ss excluding fs
+      def sequence(fs, ss)
+        fi = index(fs)
+        si = index(ss)
+        seq = if fi > si
+                @sequence[si..fi].map { |i| @state[i] }.reverse
+              else
+                @sequence[fi..si].map { |i| @state[i] }
+              end
+        seq[1..-1]
+      end
 
-    def cmp?(a,b)
-      index(a) < index(b)
+      def cmp?(a, b)
+        index(a) < index(b)
+      end
     end
   end
-end
 
   ensurable do
     desc "The running state of the zone.  The valid states directly reflect
@@ -63,24 +66,24 @@ end
     end
 
     def self.alias_state(values)
-      values.each do |k,v|
-        fsm.alias_state(k,v)
+      values.each do |k, v|
+        fsm.alias_state(k, v)
       end
     end
 
     def self.seqvalue(name, hash)
       fsm.insert_state(name, hash)
-      self.newvalue name
+      newvalue name
     end
 
     # This is seq value because the order of declaration is important.
     # i.e we go linearly from :absent -> :configured -> :installed -> :running
-    seqvalue :absent, :down => :destroy
-    seqvalue :configured, :up => :configure, :down => :uninstall
-    seqvalue :installed, :up => :install, :down => :stop
-    seqvalue :running, :up => :start
+    seqvalue :absent, down: :destroy
+    seqvalue :configured, up: :configure, down: :uninstall
+    seqvalue :installed, up: :install, down: :stop
+    seqvalue :running, up: :start
 
-    alias_state :incomplete => :installed, :ready => :installed, :shutting_down => :running
+    alias_state incomplete: :installed, ready: :installed, shutting_down: :running
 
     defaultto :running
 
@@ -99,12 +102,12 @@ end
       warned = false
       while provider.processing?
         next if warned
-        info _("Waiting for zone to finish processing")
+        info _('Waiting for zone to finish processing')
         warned = true
         sleep 1
       end
       provider.send(method)
-      provider.flush()
+      provider.flush
     end
 
     def sync
@@ -113,24 +116,23 @@ end
 
       # We need to get the state we're currently in and just call
       # everything between it and us.
-      self.class.state_sequence(self.retrieve, self.should).each do |state|
+      self.class.state_sequence(retrieve, should).each do |state|
         method = state[direction]
-        raise Puppet::DevError, _("Cannot move %{direction} from %{name}") % { direction: direction, name: st[:name] } unless method
+        raise Puppet::DevError, _('Cannot move %{direction} from %{name}') % { direction: direction, name: st[:name] } unless method
         provider_sync_send(method)
       end
 
-      ("zone_#{self.should}").intern
+      "zone_#{should}".to_sym
     end
 
     # Are we moving up the property tree?
     def up?
-      self.class.fsm.cmp?(self.retrieve, self.should)
+      self.class.fsm.cmp?(retrieve, should)
     end
-
   end
 
   newparam(:name) do
-    desc "The name of the zone."
+    desc 'The name of the zone.'
 
     isnamevar
   end
@@ -147,7 +149,7 @@ end
       zone will be used. The zone from which you clone must not be running."
   end
 
-  newproperty(:ip, :parent => Puppet::Property::List) do
+  newproperty(:ip, parent: Puppet::Property::List) do
     require 'ipaddr'
 
     desc "The IP address of the zone.  IP addresses **must** be specified
@@ -165,26 +167,24 @@ end
     # The default action of list should is to lst.join(' '). By specifying
     # @should, we ensure the should remains an array. If we override should, we
     # should also override insync?() -- property/list.rb
-    def should
-      @should
-    end
+    attr_reader :should
 
     # overridden so that we match with self.should
     def insync?(is)
       is = [] if !is || is == :absent
-      is.sort == self.should.sort
+      is.sort == should.sort
     end
   end
 
   newproperty(:iptype) do
-    desc "The IP stack type of the zone."
+    desc 'The IP stack type of the zone.'
     defaultto :shared
     newvalue :shared
     newvalue :exclusive
   end
 
-  newproperty(:autoboot, :boolean => true) do
-    desc "Whether the zone should automatically boot."
+  newproperty(:autoboot, boolean: true) do
+    desc 'Whether the zone should automatically boot.'
     defaultto true
     newvalues(:true, :false)
   end
@@ -196,11 +196,11 @@ end
       Puppet to move a zone. Consequently this is a readonly property."
 
     validate do |value|
-      raise ArgumentError, _("The zone base must be fully qualified") unless value =~ /^\//
+      raise ArgumentError, _('The zone base must be fully qualified') unless value =~ %r{^/}
     end
 
     munge do |value|
-      if value =~ /%s/
+      if value =~ %r{%s}
         value % @resource[:name]
       else
         value
@@ -209,52 +209,48 @@ end
   end
 
   newproperty(:pool) do
-    desc "The resource pool for this zone."
+    desc 'The resource pool for this zone.'
   end
 
   newproperty(:shares) do
-    desc "Number of FSS CPU shares allocated to the zone."
+    desc 'Number of FSS CPU shares allocated to the zone.'
   end
 
-  newproperty(:dataset, :parent => Puppet::Property::List ) do
+  newproperty(:dataset, parent: Puppet::Property::List) do
     desc "The list of datasets delegated to the non-global zone from the
       global zone.  All datasets must be zfs filesystem names which are
       different from the mountpoint."
 
-    def should
-      @should
-    end
+    attr_reader :should
 
     # overridden so that we match with self.should
     def insync?(is)
       is = [] if !is || is == :absent
-      is.sort == self.should.sort
+      is.sort == should.sort
     end
 
     validate do |value|
-      unless value !~ /^\//
-        raise ArgumentError, _("Datasets must be the name of a zfs filesystem")
+      unless value !~ %r{^/}
+        raise ArgumentError, _('Datasets must be the name of a zfs filesystem')
       end
     end
   end
 
-  newproperty(:inherit, :parent => Puppet::Property::List) do
+  newproperty(:inherit, parent: Puppet::Property::List) do
     desc "The list of directories that the zone inherits from the global
       zone.  All directories must be fully qualified."
 
-    def should
-      @should
-    end
+    attr_reader :should
 
     # overridden so that we match with self.should
     def insync?(is)
       is = [] if !is || is == :absent
-      is.sort == self.should.sort
+      is.sort == should.sort
     end
 
     validate do |value|
-      unless value =~ /^\//
-        raise ArgumentError, _("Inherited filesystems must be fully qualified")
+      unless value =~ %r{^/}
+        raise ArgumentError, _('Inherited filesystems must be fully qualified')
       end
     end
   end
@@ -294,15 +290,15 @@ end
   end
 
   newparam(:create_args) do
-    desc "Arguments to the `zonecfg` create command.  This can be used to create branded zones."
+    desc 'Arguments to the `zonecfg` create command.  This can be used to create branded zones.'
   end
 
   newparam(:install_args) do
-    desc "Arguments to the `zoneadm` install command.  This can be used to create branded zones."
+    desc 'Arguments to the `zoneadm` install command.  This can be used to create branded zones.'
   end
 
   newparam(:realhostname) do
-    desc "The actual hostname of the zone."
+    desc 'The actual hostname of the zone.'
   end
 
   # If Puppet is also managing the base dir or its parent dir, list them
@@ -327,17 +323,18 @@ end
   def validate_ip(ip, name)
     IPAddr.new(ip) if ip
   rescue ArgumentError
-    self.fail Puppet::Error, _("'%{ip}' is an invalid %{name}") % { ip: ip, name: name }, $!
+    raise Puppet::Error, _("'%{ip}' is an invalid %{name}") % { ip: ip, name: name }, $ERROR_INFO
   end
 
-  def validate_exclusive(interface, address, router)
-    return if !interface.nil? and address.nil?
-    self.fail _("only interface may be specified when using exclusive IP stack: %{interface}:%{address}") % { interface: interface, address: address }
+  def validate_exclusive(interface, address, _router)
+    return if !interface.nil? && address.nil?
+    fail _('only interface may be specified when using exclusive IP stack: %{interface}:%{address}') % { interface: interface, address: address }
   end
+
   def validate_shared(interface, address, router)
-    self.fail _("ip must contain interface name and ip address separated by a \":\"") if interface.nil? or address.nil?
+    fail _('ip must contain interface name and ip address separated by a ":"') if interface.nil? || address.nil?
     [address, router].each do |ip|
-      validate_ip(address, "IP address") unless ip.nil?
+      validate_ip(address, 'IP address') unless ip.nil?
     end
   end
 
@@ -358,9 +355,9 @@ end
   def retrieve
     provider.flush
     hash = provider.properties
-    return setstatus(hash) unless hash.nil? or hash[:ensure] == :absent
+    return setstatus(hash) unless hash.nil? || hash[:ensure] == :absent
     # Return all properties as absent.
-    return Hash[properties.map{|p| [p, :absent]} ]
+    Hash[properties.map { |p| [p, :absent] }]
   end
 
   # Take the results of a listing and set everything appropriately.
@@ -371,7 +368,7 @@ end
       case self.class.attrtype(param)
       when :property
         # Only try to provide values for the properties we're managing
-        prop = self.property(param)
+        prop = property(param)
         prophash[prop] = value if prop
       else
         self[param] = value

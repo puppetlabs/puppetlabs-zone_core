@@ -1,8 +1,8 @@
 Puppet::Type.type(:zone).provide(:solaris) do
-  desc "Provider for Solaris Zones."
+  desc 'Provider for Solaris Zones.'
 
-  commands :adm => "/usr/sbin/zoneadm", :cfg => "/usr/sbin/zonecfg"
-  defaultfor :osfamily => :solaris
+  commands adm: '/usr/sbin/zoneadm', cfg: '/usr/sbin/zonecfg'
+  defaultfor osfamily: :solaris
 
   mk_resource_methods
 
@@ -13,27 +13,27 @@ Puppet::Type.type(:zone).provide(:solaris) do
 
     del_id = [:brand, :uuid]
     # Configured but not installed zones do not have IDs
-    del_id << :id if properties[:id] == "-"
+    del_id << :id if properties[:id] == '-'
     del_id.each { |p| properties.delete(p) }
 
-    properties[:ensure] = properties[:ensure].intern
+    properties[:ensure] = properties[:ensure].to_sym
     properties[:iptype] = 'exclusive' if properties[:iptype] == 'excl'
 
     properties
   end
 
   def self.instances
-    adm(:list, "-cp").split("\n").collect do |line|
+    adm(:list, '-cp').split("\n").map do |line|
       new(line2hash(line))
     end
   end
 
-  def multi_conf(name, should, &action)
+  def multi_conf(name, should)
     has = properties[name]
     has = [] if !has || has == :absent
     rms = has - should
     adds = should - has
-    (rms.map{|o| action.call(:rm,o)} + adds.map{|o| action.call(:add,o)}).join("\n")
+    (rms.map { |o| yield(:rm, o) } + adds.map { |o| yield(:add, o) }).join("\n")
   end
 
   def self.def_prop(var, str)
@@ -41,39 +41,39 @@ Puppet::Type.type(:zone).provide(:solaris) do
       str % v
     end
     define_method('%s=' % var.to_s) do |v|
-      setconfig self.send( ('%s_conf'% var).intern, v)
+      setconfig send(('%s_conf' % var).to_sym, v)
     end
   end
 
   def self.def_multiprop(var, &conf)
-    define_method(var.to_s) do |v|
+    define_method(var.to_s) do |_v|
       o = properties[var]
-      return '' if o.nil? or o == :absent
+      return '' if o.nil? || o == :absent
       o.join(' ')
     end
     define_method('%s=' % var.to_s) do |v|
-      setconfig self.send( ('%s_conf'% var).intern, v)
+      setconfig send(('%s_conf' % var).to_sym, v)
     end
     define_method('%s_conf' % var.to_s) do |v|
       multi_conf(var, v, &conf)
     end
   end
 
-  def_prop :iptype, "set ip-type=%s"
-  def_prop :autoboot, "set autoboot=%s"
-  def_prop :path, "set zonepath=%s"
-  def_prop :pool, "set pool=%s"
+  def_prop :iptype, 'set ip-type=%s'
+  def_prop :autoboot, 'set autoboot=%s'
+  def_prop :path, 'set zonepath=%s'
+  def_prop :pool, 'set pool=%s'
   def_prop :shares, "add rctl\nset name=zone.cpu-shares\nadd value (priv=privileged,limit=%s,action=none)\nend"
 
   def_multiprop :ip do |action, str|
     interface, ip, defrouter = str.split(':')
     case action
     when :add
-      cmd = ["add net"]
+      cmd = ['add net']
       cmd << "set physical=#{interface}" if interface
       cmd << "set address=#{ip}" if ip
       cmd << "set defrouter=#{defrouter}" if defrouter
-      cmd << "end"
+      cmd << 'end'
       cmd.join("\n")
     when :rm
       if ip
@@ -81,25 +81,25 @@ Puppet::Type.type(:zone).provide(:solaris) do
       elsif interface
         "remove net physical=#{interface}"
       else
-        raise ArgumentError, _("can not remove network based on default router")
+        raise ArgumentError, _('can not remove network based on default router')
       end
-    else self.fail action
+    else raise action
     end
   end
 
   def_multiprop :dataset do |action, str|
     case action
-    when :add; ['add dataset',"set name=#{str}",'end'].join("\n")
-    when :rm; "remove dataset name=#{str}"
-    else self.fail action
+    when :add then ['add dataset', "set name=#{str}", 'end'].join("\n")
+    when :rm then "remove dataset name=#{str}"
+    else raise action
     end
   end
 
   def_multiprop :inherit do |action, str|
     case action
-    when :add; ['add inherit-pkg-dir', "set dir=#{str}",'end'].join("\n")
-    when :rm; "remove inherit-pkg-dir dir=#{str}"
-    else self.fail action
+    when :add then ['add inherit-pkg-dir', "set dir=#{str}", 'end'].join("\n")
+    when :rm then "remove inherit-pkg-dir dir=#{str}"
+    else raise action
     end
   end
 
@@ -109,21 +109,21 @@ Puppet::Type.type(:zone).provide(:solaris) do
 
   # Perform all of our configuration steps.
   def configure
-    self.fail "Path is required" unless @resource[:path]
+    raise 'Path is required' unless @resource[:path]
     arr = ["create -b #{@resource[:create_args]}"]
 
     # Then perform all of our configuration steps.  It's annoying
     # that we need this much internal info on the resource.
-    self.resource.properties.each do |property|
+    resource.properties.each do |property|
       next unless my_properties.include? property.name
-      method = (property.name.to_s + '_conf').intern
-      arr << self.send(method ,@resource[property.name]) unless property.safe_insync?(properties[property.name])
+      method = (property.name.to_s + '_conf').to_sym
+      arr << send(method, @resource[property.name]) unless property.safe_insync?(properties[property.name])
     end
     setconfig(arr.join("\n"))
   end
 
   def destroy
-    zonecfg :delete, "-F"
+    zonecfg :delete, '-F'
   end
 
   def add_cmd(cmd)
@@ -140,30 +140,28 @@ Puppet::Type.type(:zone).provide(:solaris) do
   def exec_cmd(var)
     # In bash, the exit value of the last command is the exit value of the
     # entire pipeline
-    out = execute("echo \"#{var[:input]}\" | #{var[:cmd]}", :failonfail => false, :combine => true)
-    st = $?.exitstatus
-    {:out => out, :exit => st}
+    out = execute("echo \"#{var[:input]}\" | #{var[:cmd]}", failonfail: false, combine: true)
+    st = $CHILD_STATUS.exitstatus
+    { out: out, exit: st }
   end
 
   # Clear out the cached values.
   def flush
     return if @cmds.nil? || @cmds.empty?
-    str = (@cmds << "commit" << "exit").join("\n")
+    str = (@cmds << 'commit' << 'exit').join("\n")
     @cmds = []
     @property_hash.clear
 
     command = "#{command(:cfg)} -z #{@resource[:name]} -f -"
-    r = exec_cmd(:cmd => command, :input => str)
-    if r[:exit] != 0 or r[:out] =~ /not allowed/
-      raise ArgumentError, _("Failed to apply configuration")
-    end
+    r = exec_cmd(cmd: command, input: str)
+    raise ArgumentError, _('Failed to apply configuration') if r[:exit] != 0 || r[:out] =~ %r{not allowed}
   end
 
   def install
     if @resource[:clone] # TODO: add support for "-s snapshot"
       zoneadm :clone, @resource[:clone]
     elsif @resource[:install_args]
-      zoneadm :install, @resource[:install_args].split(" ")
+      zoneadm :install, @resource[:install_args].split(' ')
     else
       zoneadm :install
     end
@@ -189,7 +187,7 @@ Puppet::Type.type(:zone).provide(:solaris) do
   def processing?
     hash = status
     return false unless hash
-    ["incomplete", "ready", "shutting_down"].include? hash[:ensure]
+    %w[incomplete ready shutting_down].include? hash[:ensure]
   end
 
   # Collect the configuration of the zone. The output looks like:
@@ -220,19 +218,19 @@ Puppet::Type.type(:zone).provide(:solaris) do
     hash = {}
     output.split("\n").each do |line|
       case line
-      when /^(\S+):\s*$/
-        name = $1
+      when %r{^(\S+):\s*$}
+        name = Regexp.last_match(1)
         current = nil # reset it
-      when /^(\S+):\s*(\S+)$/
-        hash[$1.intern] = $2
-      when /^\s+(\S+):\s*(.+)$/
+      when %r{^(\S+):\s*(\S+)$}
+        hash[Regexp.last_match(1).to_sym] = Regexp.last_match(2)
+      when %r{^\s+(\S+):\s*(.+)$}
         if name
           hash[name] ||= []
           unless current
             current = {}
             hash[name] << current
           end
-          current[$1.intern] = $2
+          current[Regexp.last_match(1).to_sym] = Regexp.last_match(2)
         else
           err "Ignoring '#{line}'"
         end
@@ -250,12 +248,14 @@ Puppet::Type.type(:zone).provide(:solaris) do
     add_cmd str
   end
 
+  # rubocop:disable Metrics/BlockNesting
   def start
     # Check the sysidcfg stuff
-    if cfg = @resource[:sysidcfg]
-      self.fail "Path is required" unless @resource[:path]
-      zoneetc = File.join(@resource[:path], "root", "etc")
-      sysidcfg = File.join(zoneetc, "sysidcfg")
+    cfg = @resource[:sysidcfg]
+    if cfg
+      fail 'Path is required' unless @resource[:path]
+      zoneetc = File.join(@resource[:path], 'root', 'etc')
+      sysidcfg = File.join(zoneetc, 'sysidcfg')
 
       # if the zone root isn't present "ready" the zone
       # which makes zoneadmd mount the zone root
@@ -266,7 +266,7 @@ Puppet::Type.type(:zone).provide(:solaris) do
           # For compatibility reasons use System encoding for this OS file
           # the manifest string is UTF-8 so this could result in conversion errors
           # which should propagate to users
-          Puppet::FileSystem.open(sysidcfg, 0600, "w:#{Encoding.default_external.name}") do |f|
+          Puppet::FileSystem.open(sysidcfg, 0o600, "w:#{Encoding.default_external.name}") do |f|
             f.puts cfg
           end
         rescue => detail
@@ -278,11 +278,12 @@ Puppet::Type.type(:zone).provide(:solaris) do
 
     zoneadm :boot
   end
+  # rubocop:enable Metrics/BlockNesting
 
   # Return a hash of the current status of this zone.
   def status
     begin
-      output = adm "-z", @resource[:name], :list, "-p"
+      output = adm '-z', @resource[:name], :list, '-p'
     rescue Puppet::ExecutionFailure
       return nil
     end
@@ -306,11 +307,11 @@ Puppet::Type.type(:zone).provide(:solaris) do
   end
 
   def unconfigure
-    zonecfg :delete, "-F"
+    zonecfg :delete, '-F'
   end
 
   def uninstall
-    zoneadm :uninstall, "-F"
+    zoneadm :uninstall, '-F'
   end
 
   private
@@ -320,18 +321,21 @@ Puppet::Type.type(:zone).provide(:solaris) do
     config = getconfig
     result = {}
 
-    result[:autoboot] = config[:autoboot] ? config[:autoboot].intern : :true
+    result[:autoboot] = (config[:autoboot]) ? config[:autoboot].to_sym : :true
     result[:pool] = config[:pool]
     result[:shares] = config[:shares]
-    if dir = config["inherit-pkg-dir"]
-      result[:inherit] = dir.collect { |dirs| dirs[:dir] }
+    dir = config['inherit-pkg-dir']
+    if dir
+      result[:inherit] = dir.map { |dirs| dirs[:dir] }
     end
-    if datasets = config["dataset"]
-      result[:dataset] = datasets.collect { |dataset| dataset[:name] }
+    datasets = config['dataset']
+    if datasets
+      result[:dataset] = datasets.map { |dataset| dataset[:name] }
     end
     result[:iptype] = config[:'ip-type'] if config[:'ip-type']
-    if net = config["net"]
-      result[:ip] = net.collect do |params|
+    net = config['net']
+    if net
+      result[:ip] = net.map do |params|
         if params[:defrouter]
           "#{params[:physical]}:#{params[:address]}:#{params[:defrouter]}"
         elsif params[:address]
@@ -346,19 +350,18 @@ Puppet::Type.type(:zone).provide(:solaris) do
   end
 
   def zoneadm(*cmd)
-    adm("-z", @resource[:name], *cmd)
+    adm('-z', @resource[:name], *cmd)
   rescue Puppet::ExecutionFailure => detail
-    self.fail Puppet::Error, "Could not #{cmd[0]} zone: #{detail}", detail
+    raise Puppet::Error, "Could not #{cmd[0]} zone: #{detail}", detail
   end
 
   def zonecfg(*cmd)
     # You apparently can't get the configuration of the global zone (strictly in solaris11)
-    return "" if self.name == "global"
+    return '' if name == 'global'
     begin
-      cfg("-z", self.name, *cmd)
+      cfg('-z', name, *cmd)
     rescue Puppet::ExecutionFailure => detail
-      self.fail Puppet::Error, "Could not #{cmd[0]} zone: #{detail}", detail
+      raise Puppet::Error, "Could not #{cmd[0]} zone: #{detail}", detail
     end
   end
 end
-
