@@ -1,4 +1,4 @@
-module Puppet::Acceptance::ZoneUtils
+module ZoneUtils
   def clean(agent)
     on(agent, 'zoneadm list -cip').stdout.lines.each do |l|
       case l
@@ -23,8 +23,5 @@ module Puppet::Acceptance::ZoneUtils
     end
     on agent, 'rm -rf /tstzones'
   end
-
-  def setup(_agent, o = {})
-    { size: '64m' }.merge(o)
-  end
+  module_function :clean
 end
