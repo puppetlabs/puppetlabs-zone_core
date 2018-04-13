@@ -40,6 +40,11 @@ RSpec.context 'Zone: should be created and removed' do
         end
 
         on(agent, 'zoneadm -z tstzone verify')
+
+        # should be idempotent
+        apply_manifest_on(agent, running_manifest) do |result|
+          assert_no_match(%r{created|changed|removed}, result.stdout, "err: #{agent}")
+        end
       end
 
       it 'deletes a zone' do
