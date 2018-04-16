@@ -58,7 +58,7 @@ describe Puppet::Type.type(:zone) do
     end
   end
 
-  it 'is valid when only :path is given' do
+  it 'accepts a path' do
     described_class.new(name: 'dummy', path: '/dummy', provider: :solaris)
   end
 
