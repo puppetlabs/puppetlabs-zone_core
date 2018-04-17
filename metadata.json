@@ -1,10 +1,10 @@
 {
-  "name": "puppetlabs-zone",
+  "name": "puppetlabs-zone_core",
   "version": "0.1.0",
   "author": "Puppet Labs",
   "summary": "Manage Solaris Zones",
   "license": "Apache-2.0",
-  "source": "https://github.com/puppetlabs/puppetlabs-zone",
+  "source": "https://github.com/puppetlabs/puppetlabs-zone_core",
   "issues_url": "https://tickets.puppetlabs.com/projects/MODULES",
   "dependencies": [
 
