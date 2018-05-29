@@ -1,0 +1,6 @@
+.rubocop.yml:
+  default_configs:
+    Style/SignalException:
+      Enabled: false
+    Layout/IndentHeredoc:
+      Enabled: false

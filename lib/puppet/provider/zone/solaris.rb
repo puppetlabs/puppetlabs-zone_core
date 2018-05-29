@@ -187,7 +187,7 @@ Puppet::Type.type(:zone).provide(:solaris) do
   def processing?
     hash = status
     return false unless hash
-    %w[incomplete ready shutting_down].include? hash[:ensure]
+    ['incomplete', 'ready', 'shutting_down'].include? hash[:ensure]
   end
 
   # Collect the configuration of the zone. The output looks like:
