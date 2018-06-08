@@ -36,7 +36,7 @@ describe Puppet::Type.type(:zone) do
   describe 'when trying to set a property that is non empty' do
     it 'verifies that property.insync? of nil or :absent is false' do
       [inherit, ip, dataset].each do |prop|
-        prop.stubs(:should).returns %w[a b]
+        prop.stubs(:should).returns ['a', 'b']
       end
       [inherit, ip, dataset].each do |prop|
         expect(prop).not_to be_insync(nil)
@@ -49,9 +49,9 @@ describe Puppet::Type.type(:zone) do
   describe 'when trying to set a property that is non empty' do
     it 'insync? should return true or false depending on the current value, and new value' do
       [inherit, ip, dataset].each do |prop|
-        prop.stubs(:should).returns %w[a b]
+        prop.stubs(:should).returns ['a', 'b']
       end
-      expect([inherit, ip, dataset]).to all(be_insync(%w[b a]))
+      expect([inherit, ip, dataset]).to all(be_insync(['b', 'a']))
       [inherit, ip, dataset].each do |prop|
         expect(prop).not_to be_insync(['a'])
       end

@@ -1,3 +1,4 @@
+#
 module ZoneUtils
   def clean(agent)
     on(agent, 'zoneadm list -cip').stdout.lines.each do |l|

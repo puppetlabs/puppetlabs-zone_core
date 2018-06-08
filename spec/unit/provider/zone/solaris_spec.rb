@@ -51,7 +51,7 @@ describe Puppet::Type.type(:zone).provider(:solaris) do
         # there is a nil check in type.rb:[]= so we cannot directly set nil.
         resource.stubs(:[]).with(:clone).returns(nil)
         resource.stubs(:[]).with(:install_args).returns('install args')
-        provider.expects(:zoneadm).with(:install, %w[install args])
+        provider.expects(:zoneadm).with(:install, ['install', 'args'])
         provider.install
       end
     end
