@@ -27,7 +27,7 @@ RSpec.context 'Zone: should be created and removed' do
 
   solaris_agents.each do |agent|
     context "on #{agent}" do
-      it 'creates a zone' do
+      it 'creates and deletes a zone' do
         step 'Zone: make it running'
         step 'progress would be logged to agent:/var/log/zones/zoneadm.<date>.<zonename>.install'
         step 'install log would be at agent:/system/volatile/install.<id>/install_log'
@@ -45,9 +45,7 @@ RSpec.context 'Zone: should be created and removed' do
         apply_manifest_on(agent, running_manifest) do |result|
           assert_no_match(%r{created|changed|removed}, result.stdout, "err: #{agent}")
         end
-      end
 
-      it 'deletes a zone' do
         step 'Zone: ensure can remove'
         step 'progress would be logged to agent:/var/log/zones/zoneadm.<date>.<zonename>.uninstall'
         apply_manifest_on(agent, absent_manifest) do |result|
