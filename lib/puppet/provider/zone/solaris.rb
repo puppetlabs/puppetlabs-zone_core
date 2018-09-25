@@ -81,7 +81,7 @@ Puppet::Type.type(:zone).provide(:solaris) do
       elsif interface
         "remove net physical=#{interface}"
       else
-        raise ArgumentError, _('can not remove network based on default router')
+        raise ArgumentError, _('Cannot remove network based on default router')
       end
     else raise action
     end
