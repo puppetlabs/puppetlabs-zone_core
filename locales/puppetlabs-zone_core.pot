@@ -6,11 +6,10 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: puppetlabs-zone_core 1.0.0-5-g5f1088d\n"
-"\n"
+"Project-Id-Version: puppetlabs-zone_core \n"
 "Report-Msgid-Bugs-To: docs@puppet.com\n"
-"POT-Creation-Date: 2018-08-20 09:50-0700\n"
-"PO-Revision-Date: 2018-08-20 09:50-0700\n"
+"POT-Creation-Date: 2018-09-25 15:57+0000\n"
+"PO-Revision-Date: 2018-09-25 15:57+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -20,7 +19,7 @@ msgstr ""
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
 #: ../lib/puppet/provider/zone/solaris.rb:84
-msgid "can not remove network based on default router"
+msgid "Cannot remove network based on default router"
 msgstr ""
 
 #: ../lib/puppet/provider/zone/solaris.rb:157
