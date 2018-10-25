@@ -23,13 +23,13 @@ The zone_core module depends on the zfs_core module, as a zone may be associated
 
 ### Beginning with zone
 
-To create a zone resource with the name `tstzone` in the `running` state and the root of the zone filesystem in `/tstzones/mnt`:
+To create a zone resource with the name `tstzone` in the `running` state and the root of the zone filesystem in `/tstzones/mnt`, use the following code:
+
 ```
 zone { 'tstzone' :
   ensure => running,
   path   => '/tstzones/mnt'
 }
-
 ```
 
 ## Usage
@@ -44,11 +44,13 @@ This module is documented using Puppet Strings.
 
 For a quick primer on how Strings works, please see [this blog post](https://puppet.com/blog/using-puppet-strings-generate-great-documentation-puppet-modules) or the [README.md](https://github.com/puppetlabs/puppet-strings/blob/master/README.md) for Puppet Strings.
 
-To generate documentation locally, run
+To generate documentation locally, run the following command:
+
 ```
 bundle install
 bundle exec puppet strings generate ./lib/**/*.rb
 ```
+
 This command will create a browsable `\_index.html` file in the `doc` directory. The references available here are all generated from YARD-style comments embedded in the code base. When any development happens on this module, the impacted documentation should also be updated.
 
 ## Limitations
