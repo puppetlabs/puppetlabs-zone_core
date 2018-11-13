@@ -1,0 +1,64 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2018 Puppet, Inc.
+# This file is distributed under the same license as the puppetlabs-zone_core package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2018.
+# 
+# Translators:
+# Erwin Hom <erwin.hom@puppet.com>, 2018
+# 
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: puppetlabs-zone_core\n"
+"Report-Msgid-Bugs-To: docs@puppet.com\n"
+"POT-Creation-Date: 2018-09-25 15:57+0000\n"
+"PO-Revision-Date: 2018-10-24 01:36+0000\n"
+"Last-Translator: Erwin Hom <erwin.hom@puppet.com>, 2018\n"
+"Language-Team: Japanese (Japan) (https://www.transifex.com/puppet/teams/41915/ja_JP/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: ja_JP\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: ../lib/puppet/provider/zone/solaris.rb:84
+msgid "Cannot remove network based on default router"
+msgstr "デフォルトルータに基づいてネットワークを削除できません。"
+
+#: ../lib/puppet/provider/zone/solaris.rb:157
+msgid "Failed to apply configuration"
+msgstr "設定の適用に失敗しました。"
+
+#: ../lib/puppet/type/zone.rb:105
+msgid "Waiting for zone to finish processing"
+msgstr "ゾーンが処理を終えるまで待機しています。"
+
+#: ../lib/puppet/type/zone.rb:121
+msgid "Cannot move %{direction} from %{name}"
+msgstr "%{name}から%{direction}を移動できません。"
+
+#: ../lib/puppet/type/zone.rb:199
+msgid "The zone base must be fully qualified"
+msgstr "ゾーンベースは完全修飾でなければなりません。"
+
+#: ../lib/puppet/type/zone.rb:234
+msgid "Datasets must be the name of a zfs filesystem"
+msgstr "データセットはzfsファイルシステムの名前でなければなりません。"
+
+#: ../lib/puppet/type/zone.rb:253
+msgid "Inherited filesystems must be fully qualified"
+msgstr "継承したファイルシステムは完全修飾でなければなりません。"
+
+#: ../lib/puppet/type/zone.rb:326
+msgid "'%{ip}' is an invalid %{name}"
+msgstr "'%{ip}'は無効な%{name}です。"
+
+#: ../lib/puppet/type/zone.rb:331
+msgid ""
+"only interface may be specified when using exclusive IP stack: "
+"%{interface}:%{address}"
+msgstr "インターフェースを指定できるのは、排他的IPスタックを使用している場合のみです: %{interface}:%{address}"
+
+#: ../lib/puppet/type/zone.rb:335
+msgid "ip must contain interface name and ip address separated by a \":\""
+msgstr "ipにはインターフェース名とIPアドレスを含め、\":\"で区切る必要があります。"
