@@ -5,7 +5,6 @@
 1. [Description](#description)
 2. [Setup - The basics of getting started with zone](#setup)
     * [Setup requirements](#setup-requirements)
-    * [Beginning with zone](#beginning-with-zone)
 3. [Usage - Configuration options and additional functionality](#usage)
 4. [Reference - An under-the-hood peek at what the module is doing and how](#reference)
 5. [Limitations - OS compatibility, etc.](#limitations)
@@ -21,7 +20,7 @@ The zone_core module is used to manage Solaris zone resources.
 
 The zone_core module depends on the zfs_core module, as a zone may be associated in a zfs resource pool.
 
-### Beginning with zone
+## Usage
 
 To create a zone resource with the name `tstzone` in the `running` state and the root of the zone filesystem in `/tstzones/mnt`, use the following code:
 
@@ -32,13 +31,9 @@ zone { 'tstzone' :
 }
 ```
 
-## Usage
-
-For details on usage, please see [the zone puppet docs](https://puppet.com/docs/puppet/latest/types/zone.html).
-
 ## Reference
 
-Please see REFERENCE.md for the reference documentation.
+Please see [`REFERENCE.md`](REFERENCE.md) for the reference documentation.
 
 This module is documented using Puppet Strings.
 
