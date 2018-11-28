@@ -3,4 +3,4 @@
 ---
 fixtures:
   forge_modules:
-#     stdlib: "puppetlabs/stdlib"
+    zfs: "puppetlabs/zfs_core"
