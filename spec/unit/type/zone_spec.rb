@@ -1,7 +1,7 @@
 #! /usr/bin/env ruby
 require 'spec_helper'
 
-describe Puppet::Type.type(:zone) do
+describe Puppet::Type.type(:zone), type: :type do
   let(:zone)     { described_class.new(name: 'dummy', path: '/dummy', provider: :solaris, ip: 'if:1.2.3.4:2.3.4.5', inherit: '/', dataset: 'tank') }
   let(:provider) { zone.provider }
   let(:ip)      { zone.property(:ip) }
@@ -96,7 +96,7 @@ describe Puppet::Type.type(:zone) do
     fs = 'random-pool/some-zfs'
 
     catalog = Puppet::Resource::Catalog.new
-    relationship_graph = Puppet::Graph::RelationshipGraph.new(Puppet::Graph::RandomPrioritizer.new)
+    relationship_graph = Puppet::Graph::RelationshipGraph.new(Puppet::Graph::SequentialPrioritizer.new)
     zfs = Puppet::Type.type(:zfs).new(name: fs)
     catalog.add_resource zfs
 
