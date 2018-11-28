@@ -11,16 +11,20 @@
 5. [制約 - OS互換性など](#limitations)
 6. [開発 - モジュール貢献についてのガイド](#development)
 
+<a id="description"></a>
 ## 説明
 
 zone_coreモジュールは、Solarisゾーンリソースの管理に使用されます。
 
+<a id="setup"></a>
 ## セットアップ
 
+<a id="setup-requirements"></a>
 ### セットアップ要件
 
 zone_coreモジュールはzfs_coreモジュールに依存します。これは、ゾーンがzfsリソースプールに関連していることがあるためです。
 
+<a id="beginning-with-zone"></a>
 ### zoneモジュールの利用方法
 
 `running`ステートおよび`/tstzones/mnt`のゾーンファイルシステムのルートで`tstzone`という名前のゾーンリソースを作成するには 、以下のコードを使用します。
@@ -32,10 +36,12 @@ zone { 'tstzone' :
 }
 ```
 
+<a id="usage"></a>
 ## 使用
 
 利用方法の詳細については、[zone puppetドキュメント](https://puppet.com/docs/puppet/latest/types/zone.html)を参照してください。
 
+<a id="reference"></a>
 ## リファレンス
 
 リファレンス文書については、REFERENCE.mdを参照してください。
@@ -53,10 +59,12 @@ bundle exec puppet strings generate ./lib/**/*.rb
 
 このコマンドにより、閲覧可能な`\_index.html`ファイルが`doc`ディレクトリに作成されます。ここで利用可能なリファレンスはすべて、コードベースに埋め込まれたYARD形式のコメントから生成されます。このモジュールに関して何らかの開発をする場合は、影響を受ける文書も更新する必要があります。
 
+<a id="limitations"></a>
 ## 制約
 
 このモジュールは、Solarisプラットフォームでのみ使用できます。
 
+<a id="development"></a>
 ## 開発
 
 Puppet ForgeのPuppet Labsモジュールは、オープンプロジェクトです。プロジェクトをさらに発展させるには、コミュニティへの貢献が不可欠です。Puppetが役立つ可能性のある膨大な数のプラットフォーム、無数のハードウェア、ソフトウェア、デプロイメント構成に我々がアクセスすることはできません。
