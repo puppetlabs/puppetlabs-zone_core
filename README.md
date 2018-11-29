@@ -10,16 +10,20 @@
 5. [Limitations - OS compatibility, etc.](#limitations)
 6. [Development - Guide for contributing to the module](#development)
 
+<a id="description"></a>
 ## Description
 
 The zone_core module is used to manage Solaris zone resources.
 
+<a id="setup"></a>
 ## Setup
 
+<a id="setup-requirements"></a>
 ### Setup Requirements
 
 The zone_core module depends on the zfs_core module, as a zone may be associated in a zfs resource pool.
 
+<a id="usage"></a>
 ## Usage
 
 To create a zone resource with the name `tstzone` in the `running` state and the root of the zone filesystem in `/tstzones/mnt`, use the following code:
@@ -31,9 +35,10 @@ zone { 'tstzone' :
 }
 ```
 
+<a id="reference"></a>
 ## Reference
 
-Please see [`REFERENCE.md`](REFERENCE.md) for the reference documentation.
+Please see REFERENCE.md for the reference documentation.
 
 This module is documented using Puppet Strings.
 
@@ -48,10 +53,12 @@ bundle exec puppet strings generate ./lib/**/*.rb
 
 This command will create a browsable `\_index.html` file in the `doc` directory. The references available here are all generated from YARD-style comments embedded in the code base. When any development happens on this module, the impacted documentation should also be updated.
 
+<a id="limitations"></a>
 ## Limitations
 
 This module is only available on Solaris platforms.
 
+<a id="development"></a>
 ## Development
 
 Puppet Labs modules on the Puppet Forge are open projects, and community contributions are essential for keeping them great. We can't access the huge number of platforms and myriad of hardware, software, and deployment configurations that Puppet is intended to serve.
