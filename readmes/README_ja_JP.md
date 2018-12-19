@@ -5,7 +5,6 @@
 1. [説明](#description)
 2. [セットアップ - zoneモジュール導入の基本](#setup)
     * [セットアップ要件](#setup-requirements)
-    * [zoneモジュールの利用方法](#beginning-with-zone)
 3. [使用 - 設定オプションと追加機能](#usage)
 4. [参考 - モジュールの機能と動作について](#reference)
 5. [制約 - OS互換性など](#limitations)
@@ -24,8 +23,8 @@ zone_coreモジュールは、Solarisゾーンリソースの管理に使用さ�
 
 zone_coreモジュールはzfs_coreモジュールに依存します。これは、ゾーンがzfsリソースプールに関連していることがあるためです。
 
-<a id="beginning-with-zone"></a>
-### zoneモジュールの利用方法
+<a id="usage"></a>
+## 使用
 
 `running`ステートおよび`/tstzones/mnt`のゾーンファイルシステムのルートで`tstzone`という名前のゾーンリソースを作成するには 、以下のコードを使用します。
 
@@ -35,11 +34,6 @@ zone { 'tstzone' :
   path   => '/tstzones/mnt'
 }
 ```
-
-<a id="usage"></a>
-## 使用
-
-利用方法の詳細については、[zone puppetドキュメント](https://puppet.com/docs/puppet/latest/types/zone.html)を参照してください。
 
 <a id="reference"></a>
 ## リファレンス
