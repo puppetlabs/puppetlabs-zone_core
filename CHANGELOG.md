@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+## [1.0.3](https://github.com/puppetlabs/puppetlabs-zone_core/tree/1.0.3) (2019-10-31)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-zone_core/compare/1.0.2...1.0.3)
+
+### Added
+
+- \(maint\) Update module using PDK 1.14.0 [\#19](https://github.com/puppetlabs/puppetlabs-zone_core/pull/19) ([mihaibuzgau](https://github.com/mihaibuzgau))
+
 ## [1.0.2](https://github.com/puppetlabs/puppetlabs-zone_core/tree/1.0.2) (2019-02-11)
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-zone_core/compare/1.0.1...1.0.2)
