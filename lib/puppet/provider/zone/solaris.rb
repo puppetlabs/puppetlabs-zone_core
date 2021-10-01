@@ -154,7 +154,7 @@ Puppet::Type.type(:zone).provide(:solaris) do
 
     command = "#{command(:cfg)} -z #{@resource[:name]} -f -"
     r = exec_cmd(cmd: command, input: str)
-    raise ArgumentError, _('Failed to apply configuration') if r[:exit] != 0 || r[:out] =~ %r{not allowed}
+    raise ArgumentError, _('Failed to apply configuration') if r[:exit] != 0 || r[:out].include?('not allowed')
   end
 
   def install
@@ -248,7 +248,6 @@ Puppet::Type.type(:zone).provide(:solaris) do
     add_cmd str
   end
 
-  # rubocop:disable Metrics/BlockNesting
   def start
     # Check the sysidcfg stuff
     cfg = @resource[:sysidcfg]

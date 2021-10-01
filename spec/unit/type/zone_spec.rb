@@ -11,7 +11,7 @@ describe Puppet::Type.type(:zone), type: :type do
   parameters = [:create_args, :install_args, :sysidcfg, :realhostname]
 
   parameters.each do |parameter|
-    it "should have a #{parameter} parameter" do
+    it "has a #{parameter} parameter" do
       expect(described_class.attrclass(parameter).ancestors).to be_include(Puppet::Parameter)
     end
   end
@@ -19,7 +19,7 @@ describe Puppet::Type.type(:zone), type: :type do
   properties = [:ip, :iptype, :autoboot, :pool, :shares, :inherit, :path]
 
   properties.each do |property|
-    it "should have a #{property} property" do
+    it "has a #{property} property" do
       expect(described_class.attrclass(property).ancestors).to be_include(Puppet::Property)
     end
   end
@@ -111,7 +111,7 @@ describe Puppet::Type.type(:zone), type: :type do
     expect(relationship_graph.dependencies(zone)).to eq([zfs])
   end
   describe Puppet::Zone::StateMachine do
-    let(:sm) { Puppet::Zone::StateMachine.new }
+    let(:sm) { described_class.new }
 
     before :each do
       sm.insert_state :absent, down: :destroy

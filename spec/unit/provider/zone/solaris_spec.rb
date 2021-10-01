@@ -140,7 +140,7 @@ net:
                                          :autoboot => 'true',
                                          :"ip-type" => 'exclusive',
                                          :zonename => 'dummy',
-                                         'net' => [{ :physical => 'net1', :'configure-allowed-address' => 'true' }],
+                                         'net' => [{ physical: 'net1', 'configure-allowed-address': 'true' }],
                                          :zonepath => '/dummy/z')
       end
     end

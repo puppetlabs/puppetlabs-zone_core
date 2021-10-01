@@ -10,7 +10,7 @@ RSpec.context 'zone manages path' do
 
   # inherit /sbin on solaris10 until PUP-3722
   def config_inherit_string(agent)
-    if agent['platform'] =~ %r{solaris-10}
+    if %r{solaris-10}.match?(agent['platform'])
       "inherit => '/sbin'"
     else
       ''
