@@ -1,6 +1,6 @@
 require 'puppet/property/list'
 Puppet::Type.newtype(:zone) do
-  @doc = "Manages Solaris zones.
+  @doc = "@summary Manages Solaris zones.
 
 **Autorequires:** If Puppet is managing the directory specified as the root of
 the zone's filesystem (with the `path` attribute), the zone resource will
@@ -196,11 +196,11 @@ autorequire that directory."
       Puppet to move a zone. Consequently this is a readonly property."
 
     validate do |value|
-      raise ArgumentError, _('The zone base must be fully qualified') unless value =~ %r{^/}
+      raise ArgumentError, _('The zone base must be fully qualified') unless %r{^/}.match?(value)
     end
 
     munge do |value|
-      if value =~ %r{%s}
+      if %r{%s}.match?(value)
         value % @resource[:name]
       else
         value
@@ -230,7 +230,7 @@ autorequire that directory."
     end
 
     validate do |value|
-      unless value !~ %r{^/}
+      unless !%r{^/}.match?(value)
         raise ArgumentError, _('Datasets must be the name of a zfs filesystem')
       end
     end
@@ -249,7 +249,7 @@ autorequire that directory."
     end
 
     validate do |value|
-      unless value =~ %r{^/}
+      unless %r{^/}.match?(value)
         raise ArgumentError, _('Inherited filesystems must be fully qualified')
       end
     end
