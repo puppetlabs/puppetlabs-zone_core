@@ -6,7 +6,7 @@ Puppet::Type.newtype(:zone) do
 the zone's filesystem (with the `path` attribute), the zone resource will
 autorequire that directory."
 
-  module Puppet::Zone
+  module Puppet::Zone # rubocop:disable Style/ClassAndModuleChildren
     # Zone state machine
     class StateMachine
       # A silly little state machine.
@@ -200,7 +200,7 @@ autorequire that directory."
     end
 
     munge do |value|
-      if %r{%s}.match?(value)
+      if value.include?('%s')
         value % @resource[:name]
       else
         value
