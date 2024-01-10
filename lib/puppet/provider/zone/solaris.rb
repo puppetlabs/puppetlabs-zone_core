@@ -320,7 +320,7 @@ Puppet::Type.type(:zone).provide(:solaris) do
     config = getconfig
     result = {}
 
-    result[:autoboot] = (config[:autoboot]) ? config[:autoboot].to_sym : :true
+    result[:autoboot] = config[:autoboot] ? config[:autoboot].to_sym : :true
     result[:pool] = config[:pool]
     result[:shares] = config[:shares]
     dir = config['inherit-pkg-dir']
