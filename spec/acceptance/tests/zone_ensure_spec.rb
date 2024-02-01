@@ -43,7 +43,7 @@ RSpec.context 'Zone: should be created and removed' do
 
         # should be idempotent
         apply_manifest_on(agent, running_manifest) do |result|
-          assert_no_match(%r{created|changed|removed}, result.stdout, "err: #{agent}")
+          refute_match(%r{created|changed|removed}, result.stdout, "err: #{agent}")
         end
 
         step 'Zone: ensure can remove'
@@ -52,7 +52,7 @@ RSpec.context 'Zone: should be created and removed' do
           assert_match(%r{ensure: removed}, result.stdout, "err: #{agent}")
         end
         on(agent, 'zoneadm list -cp') do |result|
-          assert_no_match(%r{tstzone}, result.stdout, "err: #{agent}")
+          refute_match(%r{tstzone}, result.stdout, "err: #{agent}")
         end
       end
     end

@@ -94,7 +94,7 @@ RSpec.context 'Zone:IP ip-type and ip configuration' do
             ip => ["ip.if.1:1.1.1.1", "ip.if.2:1.1.1.3"]
           }
           MANIFEST
-          assert_no_match(%r{ip changed}, result.stdout, "err: #{agent}")
+          refute_match(%r{ip changed}, result.stdout, "err: #{agent}")
         end
       end
     end

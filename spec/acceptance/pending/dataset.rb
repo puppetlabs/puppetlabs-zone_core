@@ -55,7 +55,7 @@ agents.each do |agent|
   end
   step 'Zone: dataset - basic test, idempotency'
   apply_manifest_on(agent, 'zone {tstzone : ensure=>configured, dataset=>"tstpool/yy", path=>"/tstzones/mnt" }') do
-    assert_no_match(%r{dataset changed tstpool/xx to \['tstpool/yy'\]}, result.stdout, "err: #{agent}")
+    refute_match(%r{dataset changed tstpool/xx to \['tstpool/yy'\]}, result.stdout, "err: #{agent}")
   end
   step 'Zone: dataset - array test, should change to an array'
   apply_manifest_on(agent, 'zone {tstzone : ensure=>configured, dataset=>["tstpool/yy","tstpool/zz"], path=>"/tstzones/mnt" }') do

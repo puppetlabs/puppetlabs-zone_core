@@ -36,7 +36,7 @@ RSpec.context 'zone manages path' do
 
         step 'Zone: statemachine - ensure zone is correct'
         on(agent, 'zoneadm -z tstzone verify') do |result|
-          assert_no_match(%r{could not verify}, result.stdout, "err: #{agent}")
+          refute_match(%r{could not verify}, result.stdout, "err: #{agent}")
         end
 
         step 'Zone: statemachine - ensure zone is running'
