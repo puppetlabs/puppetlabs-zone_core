@@ -10,15 +10,15 @@ require 'puppet/acceptance/solaris_util'
 extend Puppet::Acceptance::ZoneUtils
 
 def poolsetup(agent)
-  on agent, 'mkdir /tstzones'
-  on agent, 'mkfile 2500m /tstzones/dsk'
-  on agent, 'zpool create tstpool /tstzones/dsk'
+  on(agent, 'mkdir /tstzones')
+  on(agent, 'mkfile 2500m /tstzones/dsk')
+  on(agent, 'zpool create tstpool /tstzones/dsk')
 end
 
 def poolclean(agent)
-  on agent, 'zfs destroy -r tstpool', acceptable_exit_codes: [0, 1]
-  on agent, 'zpool destroy tstpool', acceptable_exit_codes: [0, 1]
-  on agent, 'rm -rf /ztstpool', acceptable_exit_codes: [0, 1]
+  on(agent, 'zfs destroy -r tstpool', acceptable_exit_codes: [0, 1])
+  on(agent, 'zpool destroy tstpool', acceptable_exit_codes: [0, 1])
+  on(agent, 'rm -rf /ztstpool', acceptable_exit_codes: [0, 1])
 end
 
 teardown do
@@ -50,7 +50,7 @@ agents.each do |agent|
       iptype => exclusive,
       ip => net1,
       require => File["/ztstpool/mnt"],
-    })) do
+    })) do |result|
     assert_match(%r{ensure: created}, result.stdout, "err: #{agent}")
   end
 end
