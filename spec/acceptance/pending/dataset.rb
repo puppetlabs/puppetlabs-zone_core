@@ -12,19 +12,19 @@ extend Puppet::Acceptance::ZoneUtils
 
 def moresetup(agent)
   # This should fail if /tstzones already exists.
-  on agent, 'mkdir /tstzones'
-  on agent, 'mkfile 64m /tstzones/dsk'
-  on agent, 'zpool create tstpool /tstzones/dsk'
+  on(agent, 'mkdir /tstzones')
+  on(agent, 'mkfile 64m /tstzones/dsk')
+  on(agent, 'zpool create tstpool /tstzones/dsk')
 
-  on agent, 'zfs create tstpool/xx'
-  on agent, 'zfs create tstpool/yy'
-  on agent, 'zfs create tstpool/zz'
+  on(agent, 'zfs create tstpool/xx')
+  on(agent, 'zfs create tstpool/yy')
+  on(agent, 'zfs create tstpool/zz')
 end
 
 def moreclean(agent)
-  on agent, 'zfs destroy -r tstpool', acceptable_exit_codes: [0, 1]
-  on agent, 'zpool destroy tstpool', acceptable_exit_codes: [0, 1]
-  on agent, 'rm -f /tstzones/dsk'
+  on(agent, 'zfs destroy -r tstpool', acceptable_exit_codes: [0, 1])
+  on(agent, 'zpool destroy tstpool', acceptable_exit_codes: [0, 1])
+  on(agent, 'rm -f /tstzones/dsk')
 end
 
 teardown do
@@ -42,31 +42,31 @@ agents.each do |agent|
   #-----------------------------------
   step 'Zone: dataset - make it configured'
   # Make it configured
-  apply_manifest_on(agent, 'zone {tstzone : ensure=>configured, path=>"/tstzones/mnt" }') do
+  apply_manifest_on(agent, 'zone {tstzone : ensure=>configured, path=>"/tstzones/mnt" }') do |result|
     assert_match(%r{ensure: created}, result.stdout, "err: #{agent}")
   end
   step 'Zone: dataset - basic test, a single data set'
-  apply_manifest_on(agent, 'zone {tstzone : ensure=>configured, dataset=>"tstpool/xx", path=>"/tstzones/mnt" }') do
+  apply_manifest_on(agent, 'zone {tstzone : ensure=>configured, dataset=>"tstpool/xx", path=>"/tstzones/mnt" }') do |result|
     assert_match(%r{defined 'dataset' as .'tstpool.xx'.}, result.stdout, "err: #{agent}")
   end
   step 'Zone: dataset - basic test, a single data set should change to another'
-  apply_manifest_on(agent, 'zone {tstzone : ensure=>configured, dataset=>"tstpool/yy", path=>"/tstzones/mnt" }') do
+  apply_manifest_on(agent, 'zone {tstzone : ensure=>configured, dataset=>"tstpool/yy", path=>"/tstzones/mnt" }') do |result|
     assert_match(%r{dataset changed tstpool/xx to \['tstpool/yy'\]}, result.stdout, "err: #{agent}")
   end
   step 'Zone: dataset - basic test, idempotency'
-  apply_manifest_on(agent, 'zone {tstzone : ensure=>configured, dataset=>"tstpool/yy", path=>"/tstzones/mnt" }') do
-    assert_no_match(%r{dataset changed tstpool/xx to \['tstpool/yy'\]}, result.stdout, "err: #{agent}")
+  apply_manifest_on(agent, 'zone {tstzone : ensure=>configured, dataset=>"tstpool/yy", path=>"/tstzones/mnt" }') do |result|
+    refute_match(%r{dataset changed tstpool/xx to \['tstpool/yy'\]}, result.stdout, "err: #{agent}")
   end
   step 'Zone: dataset - array test, should change to an array'
-  apply_manifest_on(agent, 'zone {tstzone : ensure=>configured, dataset=>["tstpool/yy","tstpool/zz"], path=>"/tstzones/mnt" }') do
+  apply_manifest_on(agent, 'zone {tstzone : ensure=>configured, dataset=>["tstpool/yy","tstpool/zz"], path=>"/tstzones/mnt" }') do |result|
     assert_match(%r{dataset changed tstpool/yy to \['tstpool/yy', 'tstpool/zz'\]}, result.stdout, "err: #{agent}")
   end
   step 'Zone: dataset - array test, should change one single element'
-  apply_manifest_on(agent, 'zone {tstzone : ensure=>configured, dataset=>["tstpool/xx","tstpool/zz"], path=>"/tstzones/mnt" }') do
+  apply_manifest_on(agent, 'zone {tstzone : ensure=>configured, dataset=>["tstpool/xx","tstpool/zz"], path=>"/tstzones/mnt" }') do |result|
     assert_match(%r{dataset changed tstpool/yy,tstpool/zz to \['tstpool/xx', 'tstpool/zz'\]}, result.stdout, "err: #{agent}")
   end
   step 'Zone: dataset - array test, should remove elements'
-  apply_manifest_on(agent, 'zone {tstzone : ensure=>configured, dataset=>[], path=>"/tstzones/mnt" }') do
+  apply_manifest_on(agent, 'zone {tstzone : ensure=>configured, dataset=>[], path=>"/tstzones/mnt" }') do |result|
     assert_match(%r{dataset changed tstpool/zz,tstpool/xx to \[\]}, result.stdout, "err: #{agent}")
   end
 end
