@@ -16,7 +16,7 @@ describe Puppet::Type.type(:zone).provider(:solaris) do
       iptype = instance_double 'Puppet::Property'
       allow(iptype).to receive(:name).and_return(:iptype)
       allow(iptype).to receive(:safe_insync?).with(iptype).and_return(false)
-      allow(provider).to receive(:properties).and_return(iptype: iptype)
+      allow(provider).to receive(:properties).and_return(iptype:)
       allow(resource).to receive(:properties).and_return([iptype])
       resource[:create_args] = 'create_args'
       expect(provider).to receive(:setconfig).with("create -b create_args\nset ip-type=shared")

@@ -118,7 +118,7 @@ autorequire that directory."
       # everything between it and us.
       self.class.state_sequence(retrieve, should).each do |state|
         method = state[direction]
-        raise Puppet::DevError, _('Cannot move %{direction} from %{name}') % { direction: direction, name: st[:name] } unless method
+        raise Puppet::DevError, _('Cannot move %{direction} from %{name}') % { direction:, name: st[:name] } unless method
         provider_sync_send(method)
       end
 
@@ -323,12 +323,12 @@ autorequire that directory."
   def validate_ip(ip, name)
     IPAddr.new(ip) if ip
   rescue ArgumentError
-    raise Puppet::Error, _("'%{ip}' is an invalid %{name}") % { ip: ip, name: name }, $ERROR_INFO
+    raise Puppet::Error, _("'%{ip}' is an invalid %{name}") % ({ ip:, name: }), $ERROR_INFO
   end
 
   def validate_exclusive(interface, address, _router)
     return if !interface.nil? && address.nil?
-    fail _('only interface may be specified when using exclusive IP stack: %{interface}:%{address}') % { interface: interface, address: address }
+    fail _('only interface may be specified when using exclusive IP stack: %{interface}:%{address}') % ({ interface:, address: })
   end
 
   def validate_shared(interface, address, router)
