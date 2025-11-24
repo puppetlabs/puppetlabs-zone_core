@@ -142,7 +142,7 @@ Puppet::Type.type(:zone).provide(:solaris) do
     # entire pipeline
     out = execute("echo \"#{var[:input]}\" | #{var[:cmd]}", failonfail: false, combine: true)
     st = $CHILD_STATUS.exitstatus
-    { out: out, exit: st }
+    { out:, exit: st }
   end
 
   # Clear out the cached values.
