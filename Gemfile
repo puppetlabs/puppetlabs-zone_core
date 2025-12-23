@@ -61,7 +61,7 @@ group :development do
   gem "beaker-abs", *location_for(ENV['BEAKER_ABS_VERSION'] || '~> 1.0')
   gem "beaker-hostgenerator"
   gem "beaker-rspec"
-  gem "beaker-puppet", *location_for(ENV['BEAKER_PUPPET_VERSION'] || '~> 4.0') if Gem::Requirement.create('< 3.2.0').satisfied_by?(Gem::Version.new(RUBY_VERSION.dup))
+  gem "beaker-puppet", *location_for(ENV['BEAKER_PUPPET_VERSION'] || '~> 4.0')
   gem "beaker-module_install_helper",                                          require: false
   gem "nokogiri",                                                              require: false
 end
