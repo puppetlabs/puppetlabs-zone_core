@@ -30,16 +30,10 @@ Gemfile:
     ":system_tests":
       - gem: voxpupuli-acceptance
 
-appveyor.yml:
-  delete: true
-.travis.yml:
-  delete: true
 .github/workflows/release.yml:
   unmanaged: false
 .github/workflows/release_prep.yml:
   unmanaged: false
-.gitlab-ci.yml:
-  delete: true
 # We still use the Vox acceptance Rake task instead of Litmus
 Rakefile:
   requires:
