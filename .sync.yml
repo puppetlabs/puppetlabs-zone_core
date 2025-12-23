@@ -22,9 +22,6 @@ Gemfile:
         from_env: BEAKER_PUPPET_VERSION
         version: '~> 4.0'
         condition: Gem::Requirement.create('< 3.2.0').satisfied_by?(Gem::Version.new(RUBY_VERSION.dup))
-      # We can unpin async when we move to Ruby 3
-      - gem: async
-        version: '~> 1'
       - gem: beaker-module_install_helper
       - gem: nokogiri
     ":system_tests":
